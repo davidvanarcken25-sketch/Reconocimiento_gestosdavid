@@ -4,34 +4,43 @@ import numpy as np
 from PIL import Image
 from keras.models import load_model
 import platform
-from streamlit_lottie import st_lottie
-import requests
 
-# -------- CONFIGURACIÓN GENERAL --------
+# -------- CONFIGURACIÓN DE PÁGINA --------
 st.set_page_config(
     page_title="🪐 Control de Nave Espacial",
     page_icon="🚀",
     layout="centered",
-    initial_sidebar_state="expanded"
 )
 
+# -------- ESTILO VISUAL --------
 st.markdown("""
     <style>
     .stApp {
-        background-color: #020817;
-        color: #00FFFF;
+        background-color: #030c1a;
+        color: #00e5ff;
         font-family: 'Orbitron', sans-serif;
     }
-    h1, h2, h3, .stMarkdown {
+    h1, h2, h3 {
         text-align: center;
+        color: #00ffff;
+    }
+    .stButton>button {
+        background-color: #00e5ff;
+        color: black;
+        border-radius: 12px;
+        font-weight: bold;
+        border: none;
+    }
+    .stButton>button:hover {
+        background-color: #ff007f;
+        color: white;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # -------- CARGA DEL MODELO --------
 st.title("🛰️ Sistema de Reconocimiento Gestual Espacial")
-st.caption("Controla tu nave intergaláctica con gestos detectados por IA")
-
+st.caption("Controla tu nave intergaláctica con inteligencia artificial")
 st.write("Versión de Python:", platform.python_version())
 
 model = load_model('keras_model.h5')
@@ -42,25 +51,16 @@ st.image("https://i.ibb.co/3NtH0qG/space-pilot.jpg", width=350)
 
 with st.sidebar:
     st.subheader("👽 Panel de Comando Galáctico")
-    st.markdown("Usa gestos para controlar el sistema:")
-    st.markdown("- ✋ Izquierda → Giro a babor")
-    st.markdown("- ✋ Arriba → Ascenso orbital")
+    st.markdown("Usa tus gestos para dirigir la nave:")
+    st.markdown("- ✋ **Izquierda:** Giro a babor")
+    st.markdown("- ✋ **Arriba:** Ascenso orbital")
+    st.markdown("---")
+    st.markdown("🧠 Modelo IA: *Teachable Machine (Keras)*")
 
-# -------- FUNCIÓN PARA CARGAR LOTTIES --------
-def load_lottie_url(url: str):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
-
-# Animaciones Lottie (puedes cambiarlas si deseas)
-lottie_left = load_lottie_url("space.json")   # giro
-lottie_up = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_q5pk6p1k.json")   # ascenso
-lottie_idle = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json") # espera
-
-# -------- CÁMARA Y PREDICCIÓN --------
+# -------- CAPTURA DE CÁMARA --------
 img_file_buffer = st.camera_input("📸 Toma una foto para identificar tu gesto")
 
+# -------- PROCESAMIENTO Y RESULTADO --------
 if img_file_buffer is not None:
     img = Image.open(img_file_buffer).resize((224, 224))
     img_array = np.array(img)
@@ -71,24 +71,23 @@ if img_file_buffer is not None:
 
     # -------- RESULTADOS --------
     if prediction[0][0] > 0.5:
-        st.subheader("🪐 Maniobra espacial detectada: **Giro a la izquierda**")
-        st_lottie(lottie_left, height=300, key="left")
+        st.subheader("🪐 Maniobra detectada: **Giro a la izquierda**")
+        st.image("https://i.ibb.co/4ftYZk8/turn-left.png", width=200)
         st.success(f"Probabilidad: {prediction[0][0]:.2f}")
-        st.markdown("**Comando ejecutado:** Viraje estelar activado. Nave girando a babor.")
+        st.markdown("**Comando ejecutado:** La nave realiza un viraje estelar a babor.")
     elif prediction[0][1] > 0.5:
-        st.subheader("🚀 Ascenso orbital detectado: **Movimiento hacia arriba**")
-        st_lottie(lottie_up, height=300, key="up")
+        st.subheader("🚀 Maniobra detectada: **Ascenso orbital**")
+        st.image("https://i.ibb.co/XFYZ6Jk/rocket-up.png", width=200)
         st.success(f"Probabilidad: {prediction[0][1]:.2f}")
         st.markdown("**Comando ejecutado:** Motores de impulso encendidos. Iniciando ascenso.")
     else:
-        st_lottie(lottie_idle, height=250, key="idle")
-        st.info("🛰️ Esperando gesto... Sistema en modo de observación galáctica.")
+        st.info("🛰️ Ningún gesto reconocido. Sistema en modo de observación galáctica.")
+        st.image("https://i.ibb.co/vdQFGFL/space-idle.png", width=200)
 else:
-    st_lottie(lottie_idle, height=250, key="idle_idle")
-    st.info("🛰️ Esperando señal de control...")
+    st.info("🛰️ Esperando señal de control... Toma una foto para continuar.")
+    st.image("https://i.ibb.co/vdQFGFL/space-idle.png", width=200)
 
 # -------- PIE DE PÁGINA --------
 st.markdown("---")
 st.caption("Desarrollado por la Agencia Espacial IA — Propulsado con Streamlit y Keras.")
-
 

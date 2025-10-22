@@ -54,7 +54,7 @@ def load_lottie_url(url: str):
     return r.json()
 
 # Animaciones Lottie (puedes cambiarlas si deseas)
-lottie_left = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_6Yq7m9.json")   # giro
+lottie_left = load_lottie_url("space.json")   # giro
 lottie_up = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_q5pk6p1k.json")   # ascenso
 lottie_idle = load_lottie_url("https://assets2.lottiefiles.com/packages/lf20_qp1q7mct.json") # espera
 

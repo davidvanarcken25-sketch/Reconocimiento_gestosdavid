@@ -87,7 +87,9 @@ else:
     st.info("🛰️ Esperando señal de control... Toma una foto para continuar.")
     st.image("https://i.ibb.co/vdQFGFL/space-idle.png", width=200)
 
-# -------- PIE DE PÁGINA --------
+# -------- GIF ANIMADO AL FINAL --------
 st.markdown("---")
-st.caption("Desarrollado por la Agencia Espacial IA — Propulsado con Streamlit y Keras.")
+st.image("https://media.tenor.com/LbJuqwFqZl8AAAAd/space-rocket.gif", use_container_width=True)
+st.caption("Desarrollado por la Agencia Espacial IA — Propulsado con Streamlit y Keras 🚀")
+
 

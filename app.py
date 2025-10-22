@@ -3,95 +3,110 @@ import cv2
 import numpy as np
 from PIL import Image
 from keras.models import load_model
+from gtts import gTTS
 import platform
+import time
+import io
 
-# ===========================
+# ===============================
 # CONFIGURACIÓN DE LA PÁGINA
-# ===========================
+# ===============================
 st.set_page_config(
-    page_title="Mood Detector 3000 – Laboratorio de Gestos",
-    page_icon="🎭",
+    page_title="Centro de Control Gestual – Misión A.R.G.O.S.",
+    page_icon="🚀",
     layout="centered"
 )
 
-# ===========================
+# ===============================
 # CARGA DEL MODELO
-# ===========================
-st.sidebar.title("⚙️ Panel de Control del Laboratorio")
-st.sidebar.info("""
-Bienvenido al **Mood Detector 3000**, un sistema experimental del  
-*Laboratorio de Expresiones Humanas* encargado de analizar gestos faciales.
-
-Sube tu modelo entrenado en **Teachable Machine (.h5)** y experimenta con tus gestos frente a la cámara.
-""")
-
+# ===============================
 model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-# ===========================
+# ===============================
 # INTERFAZ PRINCIPAL
-# ===========================
-st.title("🎭 Mood Detector 3000")
-st.caption("Laboratorio de Expresiones Humanas | Proyecto EmotiCore")
+# ===============================
+st.title("🚀 Centro de Control Gestual A.R.G.O.S.")
+st.caption("Sistema de reconocimiento de gestos para navegación espacial")
 
-st.image("OIG5.jpg", width=280, caption="Cámara biométrica de análisis emocional")
+# Imagen decorativa (futurista o de la nave)
+st.image("OIG5.jpg", width=320, caption="Unidad de análisis visual A.R.G.O.S. en línea")
 
 st.markdown("---")
+st.text(f"Versión del sistema: Python {platform.python_version()} | Núcleo Visual A.R.G.O.S. v1.5")
 
-# Mostrar versión del entorno
-st.text(f"Versión del sistema: Python {platform.python_version()} • Núcleo EmotiCore v2.1")
+# ===============================
+# SIDEBAR
+# ===============================
+with st.sidebar:
+    st.subheader("📡 Módulo de entrenamiento activo")
+    st.info("Este sistema usa un modelo de **Teachable Machine** para interpretar gestos como comandos espaciales.")
+    st.write("Captura un gesto frente a la cámara para ejecutar una orden.")
 
-# ===========================
+# ===============================
 # CAPTURA DE IMAGEN
-# ===========================
-st.markdown("### 📸 Escaneo facial")
-st.write("Activa tu cámara y realiza un gesto. El sistema intentará identificar el estado emocional dominante.")
+# ===============================
+st.markdown("### 🎥 Escáner de Comando Gestual")
+img_file_buffer = st.camera_input("Activa la cámara y realiza tu gesto")
 
-img_file_buffer = st.camera_input("Cámara de detección")
-
+# ===============================
+# PROCESAMIENTO DE LA IMAGEN
+# ===============================
 if img_file_buffer is not None:
-    with st.spinner("🧠 Analizando microexpresiones..."):
-        # Leer imagen y preparar datos
-        img = Image.open(img_file_buffer)
-        img_resized = img.resize((224, 224))
-        img_array = np.array(img_resized)
+    # Cargar imagen
+    img = Image.open(img_file_buffer)
+    img_resized = img.resize((224, 224))
+    img_array = np.array(img_resized)
 
-        normalized_image_array = (img_array.astype(np.float32) / 127.0) - 1
-        data[0] = normalized_image_array
+    # Normalizar
+    normalized_image_array = (img_array.astype(np.float32) / 127.0) - 1
+    data[0] = normalized_image_array
 
-        # Predicción
+    # Ejecutar predicción
+    with st.spinner("🔍 Analizando gesto..."):
+        time.sleep(1)
         prediction = model.predict(data)
+    
+    st.success("✅ Comando recibido con éxito")
 
-    st.success("✅ Escaneo completado")
-
-    # ===========================
-    # INTERPRETACIÓN DE RESULTADOS
-    # ===========================
-    st.markdown("### 🔬 Resultado del análisis de gesto")
+    # ===============================
+    # INTERPRETACIÓN Y RESULTADOS
+    # ===============================
+    mensaje = ""
     if prediction[0][0] > 0.5:
-        st.subheader("😎 Modo Energético: Confianza Absoluta")
-        st.write(f"**Intensidad del gesto:** {prediction[0][0]:.2%}")
-        st.caption("Interpretación: Seguridad, poder y dominio de la situación.")
+        st.subheader("🖐️ Gesto detectado: **IZQUIERDA**")
+        st.write(f"Probabilidad: {prediction[0][0]:.2%}")
+        mensaje = "Comando recibido: activando propulsores laterales izquierdos."
+        st.caption(mensaje)
+
     elif prediction[0][1] > 0.5:
-        st.subheader("🤔 Modo Energético: Curiosidad Activa")
-        st.write(f"**Intensidad del gesto:** {prediction[0][1]:.2%}")
-        st.caption("Interpretación: Interés, análisis y pensamiento crítico.")
+        st.subheader("✋ Gesto detectado: **ARRIBA**")
+        st.write(f"Probabilidad: {prediction[0][1]:.2%}")
+        mensaje = "Comando recibido: elevando la nave a coordenadas superiores."
+        st.caption(mensaje)
+
     else:
-        st.subheader("😐 Modo Energético: Neutro o no reconocido")
-        st.caption("El sistema no pudo detectar un gesto dominante. Intenta otro movimiento facial más claro.")
+        st.subheader("🤷‍♂️ Gesto no reconocido")
+        mensaje = "Comando no válido. Por favor, intenta nuevamente."
+        st.caption(mensaje)
 
-    st.markdown("---")
-    st.info("Vuelve a tomar una foto con otro gesto para probar diferentes resultados.")
+    # ===============================
+    # GENERAR AUDIO AUTOMÁTICAMENTE
+    # ===============================
+    if mensaje:
+        tts = gTTS(text=mensaje, lang='es')
+        audio_bytes = io.BytesIO()
+        tts.write_to_fp(audio_bytes)
+        st.audio(audio_bytes.getvalue(), format="audio/mp3")
 
-# ===========================
+# ===============================
 # PIE DE PÁGINA
-# ===========================
+# ===============================
 st.markdown("---")
 st.caption("""
-**Mood Detector 3000**  
-Proyecto del Laboratorio de Expresiones Humanas.  
-Sistema de detección de gestos faciales desarrollado con Streamlit y Keras.  
-Versión experimental 1.2
+🛰️ **Centro de Control Gestual A.R.G.O.S.**  
+Proyecto experimental de reconocimiento de gestos.  
+Desarrollado con **Streamlit + Keras + gTTS + Teachable Machine**.  
 """)
 
 

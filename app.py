@@ -47,7 +47,7 @@ model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 # -------- IMAGEN PRINCIPAL --------
-st.image("https://i.ibb.co/3NtH0qG/space-pilot.jpg", width=350)
+st.image("nave.jpg", width=350)
 
 with st.sidebar:
     st.subheader("👽 Panel de Comando Galáctico")
@@ -72,24 +72,21 @@ if img_file_buffer is not None:
     # -------- RESULTADOS --------
     if prediction[0][0] > 0.5:
         st.subheader("🪐 Maniobra detectada: **Giro a la izquierda**")
-        st.image("https://i.ibb.co/4ftYZk8/turn-left.png", width=200)
+        st.image("ees.jpg", width=200)
         st.success(f"Probabilidad: {prediction[0][0]:.2f}")
         st.markdown("**Comando ejecutado:** La nave realiza un viraje estelar a babor.")
     elif prediction[0][1] > 0.5:
         st.subheader("🚀 Maniobra detectada: **Ascenso orbital**")
-        st.image("https://i.ibb.co/XFYZ6Jk/rocket-up.png", width=200)
+        st.image("nave.jpg", width=200)
         st.success(f"Probabilidad: {prediction[0][1]:.2f}")
         st.markdown("**Comando ejecutado:** Motores de impulso encendidos. Iniciando ascenso.")
     else:
         st.info("🛰️ Ningún gesto reconocido. Sistema en modo de observación galáctica.")
-        st.image("https://i.ibb.co/vdQFGFL/space-idle.png", width=200)
+    
 else:
     st.info("🛰️ Esperando señal de control... Toma una foto para continuar.")
-    st.image("https://i.ibb.co/vdQFGFL/space-idle.png", width=200)
+    st.image("cet.jpg", width=200)
 
-# -------- GIF ANIMADO AL FINAL --------
-st.markdown("---")
-st.image("https://media.tenor.com/LbJuqwFqZl8AAAAd/space-rocket.gif", use_container_width=True)
-st.caption("Desarrollado por la Agencia Espacial IA — Propulsado con Streamlit y Keras 🚀")
+
 
 

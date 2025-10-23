@@ -48,7 +48,7 @@ model = load_model('keras_model.h5')
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 # -------- IMAGEN PRINCIPAL --------
-st.image("cet.jpg", width=350, caption="Prepárate, estudiante...")
+st.image("karate.jpg", width=350, caption="Prepárate, estudiante...")
 
 with st.sidebar:
     st.subheader("⚔️ Panel del Dojo")
@@ -73,12 +73,12 @@ if img_file_buffer is not None:
     # -------- RESULTADOS --------
     if prediction[0][0] > 0.5:
         st.subheader("🛡️ Movimiento detectado: **Bloqueo defensivo**")
-        st.image("ees.jpg", width=200)
+        st.image("defensa.jpg", width=200)
         st.success(f"Precisión: {prediction[0][0]:.2f}")
         st.markdown("**Resultado:** Defensa perfecta. Has desviado el ataque enemigo.")
     elif prediction[0][1] > 0.5:
         st.subheader("👊 Movimiento detectado: **Puñetazo directo**")
-        st.image("nave.jpg", width=200)
+        st.image("puno.jpg", width=200)
         st.success(f"Precisión: {prediction[0][1]:.2f}")
         st.markdown("**Resultado:** ¡Impacto exitoso! Tu golpe ha sido poderoso.")
     else:
